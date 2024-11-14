@@ -15,4 +15,4 @@ const getAllDemos = async (req, res) => {
   res.status(200).json(demos);
 };
 
-export { getAllDemos };
+export default getAllDemos;
