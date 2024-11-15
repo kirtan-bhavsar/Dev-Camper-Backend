@@ -29,12 +29,12 @@ const bootcampSchema = new mongoose.Schema({
     // GeoJSON Point
     type: {
       type: String,
-      enum: [Point],
-      required: true,
+      enum: ["Point"],
+      //   required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
+      //   required: true,
       index: "2dsphere",
     },
     formattedAddress: String,
@@ -68,19 +68,19 @@ const bootcampSchema = new mongoose.Schema({
     default: "no-photo.jpg",
   },
   housing: {
-    housing: Boolean,
+    type: Boolean,
     default: false,
   },
   jobAssistance: {
-    housing: Boolean,
+    type: Boolean,
     default: false,
   },
   jobGuarantee: {
-    housing: Boolean,
+    type: Boolean,
     default: false,
   },
   acceptGi: {
-    housing: Boolean,
+    type: Boolean,
     default: false,
   },
   createdAt: {

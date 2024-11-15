@@ -9,6 +9,8 @@ const port = process.env.PORT;
 const app = express();
 const mongoUri = process.env.MONGO_URI;
 
+app.use(express.json());
+
 // app.use(logger);
 // Morgan middleware
 if (process.env.NODE_ENV === "development") {
