@@ -68,9 +68,6 @@ const createBootcamp = async (req, res) => {
 // @route PUT /api/v1/bootcamps/:id
 // @access public
 const updateBootcampById = async (req, res) => {
-  // res
-  //   .status(200)
-  // .json({ success: true, message: `Bootcamp updated for ${req.params.id}` });
   try {
     const bootcamp = req.body;
 
@@ -99,10 +96,6 @@ const updateBootcampById = async (req, res) => {
 // @route DELETE /api/v1/bootcamps/:id
 // @access public
 const deleteBootcampById = async (req, res) => {
-  // res
-  //   .status(200)
-  //   .json({ success: true, message: `Bootcamp deleted for ${req.params.id}` });
-
   try {
     const bootcampId = req.params.id;
 
