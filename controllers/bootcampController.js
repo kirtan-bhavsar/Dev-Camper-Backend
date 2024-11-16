@@ -4,17 +4,44 @@ import Bootcamp from "../models/Bootcamp.js";
 // @desc get All Bootcamps
 // @route GET /api/v1/bootcamps
 // @access public
-const getAllBootcamps = (req, res) => {
-  res.status(200).json({ success: true, message: "Display all bootcamps" });
+const getAllBootcamps = async (req, res) => {
+  // res.status(200).json({ success: true, message: "Display all bootcamps" });
+
+  const bootcamps = await Bootcamp.find();
+
+  // console.log(bootcamps);
+
+  // res.json(200).json({ message: "getAllBootcamps being called" });
+
+  res.json(200).json({ bootcamps });
 };
 
 // @desc get bootcamp by Id
 // @route GET /api/v1/bootcamps/:id
 // @access public
-const getBootcampById = (req, res) => {
-  res
-    .status(200)
-    .json({ success: true, message: `Display bootcamp ${req.params.id}` });
+const getBootcampById = async (req, res) => {
+  // res
+  //   .status(200)
+  //   .json({ success: true, message: `Display bootcamp ${req.params.id}` });
+  try {
+    const bootcampId = req.params.id;
+    if (!bootcampId) {
+      return res.status(400).json({
+        success: false,
+        message: `Please find a valid Id to find the necessary bootcamp`,
+      });
+    }
+    const bootcamp = await Bootcamp.findById(bootcampId);
+    if (!bootcamp) {
+      return res.status(400).json({
+        success: "false",
+        message: "No bootcamp found for the provided Id",
+      });
+    }
+    res.status(200).json(bootcamp);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // @desc create bootcamps
