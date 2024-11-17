@@ -13,7 +13,9 @@ const getAllBootcamps = async (req, res) => {
         .status(400)
         .json({ success: false, message: "No Bootcmaps exists" });
     }
-    res.status(200).json({ bootcamps });
+    res
+      .status(200)
+      .json({ success: true, count: bootcamps.length, data: bootcamps });
   } catch (error) {}
 };
 
