@@ -22,7 +22,7 @@ const getAllBootcamps = async (req, res) => {
 // @desc get bootcamp by Id
 // @route GET /api/v1/bootcamps/:id
 // @access public
-const getBootcampById = async (req, res) => {
+const getBootcampById = async (req, res, next) => {
   // res
   //   .status(200)
   //   .json({ success: true, message: `Display bootcamp ${req.params.id}` });
@@ -43,7 +43,8 @@ const getBootcampById = async (req, res) => {
     }
     res.status(200).json(bootcamp);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    next(error);
   }
 };
 

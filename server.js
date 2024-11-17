@@ -4,6 +4,7 @@ import logger from "./middleware/loggerMiddleware.js";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import colors from "colors";
+import errorHandler from "./middleware/errorHandler.js";
 
 const port = process.env.PORT;
 const app = express();
@@ -24,6 +25,8 @@ import bootcampRouter from "./routes/bootcampRoutes.js";
 // Mount Routers
 app.use("/api/demos", demoRouter);
 app.use("/api/v1/bootcamps", bootcampRouter);
+
+app.use(errorHandler);
 
 mongoose
   .connect(mongoUri)
