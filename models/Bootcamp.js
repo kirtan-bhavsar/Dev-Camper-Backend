@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
+import geocoder from "../utils/getcoder.js";
 
 const bootcampSchema = new mongoose.Schema({
   name: {
@@ -91,8 +92,26 @@ const bootcampSchema = new mongoose.Schema({
 });
 
 // A document middleware to make a slug based on the name of the bootcamp
-bootcampSchema.pre("save", function () {
+bootcampSchema.pre("save", function (next) {
   this.slug = slugify(this.name);
+  next();
+});
+
+// A geocoder middleware to conver a given address to geocode
+bootcampSchema.pre("save", async function (next) {
+  const loc = await geocoder.geocode(this.address);
+  this.location = {
+    type: "Point",
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formattedAddress: loc[0].formattedAddress,
+    street: loc[0].streetName,
+    city: loc[0].city,
+    state: loc[0].state,
+    zipcode: loc[0].zipcode,
+    country: loc[0].country,
+  };
+  console.log(this.address);
+  console.log(loc);
 });
 
 export default mongoose.model("Bootcamp", bootcampSchema);
