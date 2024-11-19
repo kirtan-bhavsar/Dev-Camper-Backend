@@ -19,6 +19,13 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 404);
   }
 
+  // validation applied while creating the bootcamp
+  if (err.name === "ValidationError") {
+    // here Object.values is used to just take the values ;
+    const message = Object.values(err.errors).map((entry) => entry.message);
+    error = new ErrorResponse(message, 404);
+  }
+
   res.status(error.statusCode || 500).json({
     success: false,
     message: error.message || "Internal Server Error",
