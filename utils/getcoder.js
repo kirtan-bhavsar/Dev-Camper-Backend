@@ -1,8 +1,8 @@
 import Geocoder from "node-geocoder";
 
 const options = {
-  provider: process.env.PROVIDER,
-  apiKey: process.env.GEOJSON_PROVIDER_API_KEY,
+  provider: "opencage",
+  apiKey: "00a9ecc3ca4545b98c1c31ffc650e215",
   httpAdapter: "https",
   formatter: null,
 };

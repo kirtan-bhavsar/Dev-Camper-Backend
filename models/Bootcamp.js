@@ -32,11 +32,11 @@ const bootcampSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Point"],
-      //   required: true,
+      // required: true,
     },
     coordinates: {
       type: [Number],
-      //   required: true,
+      // required: true,
       index: "2dsphere",
     },
     formattedAddress: String,
@@ -111,7 +111,9 @@ bootcampSchema.pre("save", async function (next) {
     country: loc[0].country,
   };
   console.log(this.address);
+  console.log("geocoder middleware running");
   console.log(loc);
+  next();
 });
 
 export default mongoose.model("Bootcamp", bootcampSchema);
