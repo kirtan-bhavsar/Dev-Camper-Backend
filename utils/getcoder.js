@@ -1,8 +1,11 @@
 import Geocoder from "node-geocoder";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const options = {
-  provider: "opencage",
-  apiKey: "00a9ecc3ca4545b98c1c31ffc650e215",
+  provider: process.env.PROVIDER,
+  apiKey: process.env.GEOJSON_PROVIDER_API_KEY,
   httpAdapter: "https",
   formatter: null,
 };
