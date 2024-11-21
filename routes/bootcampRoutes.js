@@ -4,6 +4,7 @@ import {
   deleteBootcampById,
   createBootcamp,
   getBootcampById,
+  getBootcampsByDistance,
 } from "../controllers/bootcampController.js";
 
 import express from "express";
@@ -16,6 +17,7 @@ const bootcampRouter = express.Router();
 // bootcampRouter.put("/:id", updateBootcampById);
 // bootcampRouter.delete("/:id", deleteBootcampById);
 
+bootcampRouter.get("/radius/:zipcode/:distance", getBootcampsByDistance);
 bootcampRouter.route("/").get(getAllBootcamps).post(createBootcamp);
 bootcampRouter
   .route("/:id")

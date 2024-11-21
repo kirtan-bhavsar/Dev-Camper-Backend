@@ -2,6 +2,7 @@
 import Bootcamp from "../models/Bootcamp.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import asyncHander from "express-async-handler";
+import geocoder from "../utils/getcoder.js";
 
 // @desc get All Bootcamps
 // @route GET /api/v1/bootcamps
@@ -105,10 +106,60 @@ const deleteBootcampById = asyncHander(async (req, res, next) => {
     .json({ success: true, message: "Bootcamp deleted successfully" });
 });
 
+// @desc get bootcamps within a specific range
+// @route GET /api/v1/bootcamps/radius/:zipcode/:distance
+// @access public
+const getBootcampsByDistance = asyncHander(async (req, res, next) => {
+  const { zipcode, distance } = req.params;
+
+  // Getting geolocation of provided zipcode
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const lng = loc[0].longitude;
+
+  // // Getting radian measure of the provided distance
+  const radius = distance / 3693;
+
+  const bootcamps = await Bootcamp.find({
+    location: {
+      $geoWithin: { $centerSphere: [[lng, lat], radius] },
+    },
+  });
+
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    data: bootcamps,
+  });
+
+  console.log({
+    lng,
+    lat,
+    radius,
+    query: {
+      location: {
+        $geoWithin: { $centerSphere: [[lng, lat], radius] },
+      },
+    },
+  });
+  console.log(
+    JSON.stringify(
+      {
+        location: {
+          $geoWithin: { $centerSphere: [[lng, lat], radius] },
+        },
+      },
+      null,
+      2
+    )
+  );
+});
+
 export {
   getAllBootcamps,
   getBootcampById,
   updateBootcampById,
   deleteBootcampById,
   createBootcamp,
+  getBootcampsByDistance,
 };
