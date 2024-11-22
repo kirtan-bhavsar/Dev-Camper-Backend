@@ -32,12 +32,14 @@ const bootcampSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Point"],
-      // required: true,
+      required: true,
+      default: "Point",
     },
     coordinates: {
       type: [Number],
-      // required: true,
+      required: true,
       index: "2dsphere",
+      default: [0, 0],
     },
     formattedAddress: String,
     street: String,
@@ -99,7 +101,9 @@ bootcampSchema.pre("save", function (next) {
 
 // A geocoder middleware to conver a given address to geocode
 bootcampSchema.pre("save", async function (next) {
+  console.log("waiting".red.inverse);
   const loc = await geocoder.geocode(this.address);
+  console.log("waiting very long".red.inverse);
   this.location = {
     type: "Point",
     coordinates: [loc[0].longitude, loc[0].latitude],
@@ -115,5 +119,7 @@ bootcampSchema.pre("save", async function (next) {
   console.log(loc);
   next();
 });
+
+// bootcampSchema.index({ location: "2dsphere" });
 
 export default mongoose.model("Bootcamp", bootcampSchema);

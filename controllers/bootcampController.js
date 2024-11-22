@@ -109,20 +109,28 @@ const deleteBootcampById = asyncHander(async (req, res, next) => {
 // @desc get bootcamps within a specific range
 // @route GET /api/v1/bootcamps/radius/:zipcode/:distance
 // @access public
-const getBootcampsByDistance = asyncHander(async (req, res, next) => {
-  const { zipcode, distance } = req.params;
 
-  // Getting geolocation of provided zipcode
-  const loc = await geocoder.geocode(zipcode);
+const getBootcampsByDistance = asyncHander(async (req, res, next) => {
+  // const { zipcode, distance } = req.params;
+  const { zipcode, distance } = req.params;
+  const { address } = req.body;
+
+  // Getting geolocation of provided zipcode using geocoder utility
+  const loc = await geocoder.geocode(address);
   const lat = loc[0].latitude;
   const lng = loc[0].longitude;
 
-  // // Getting radian measure of the provided distance
-  const radius = distance / 3693;
+  console.log(zipcode, lng, lat);
 
   const bootcamps = await Bootcamp.find({
     location: {
-      $geoWithin: { $centerSphere: [[lng, lat], radius] },
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        $maxDistance: distance,
+      },
     },
   });
 
@@ -131,28 +139,6 @@ const getBootcampsByDistance = asyncHander(async (req, res, next) => {
     count: bootcamps.length,
     data: bootcamps,
   });
-
-  console.log({
-    lng,
-    lat,
-    radius,
-    query: {
-      location: {
-        $geoWithin: { $centerSphere: [[lng, lat], radius] },
-      },
-    },
-  });
-  console.log(
-    JSON.stringify(
-      {
-        location: {
-          $geoWithin: { $centerSphere: [[lng, lat], radius] },
-        },
-      },
-      null,
-      2
-    )
-  );
 });
 
 export {

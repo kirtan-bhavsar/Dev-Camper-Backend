@@ -34,7 +34,7 @@ const bootcamps = JSON.parse(
 // Performing import data
 const importData = async () => {
   try {
-    // await Bootcamp.create(bootcamps[0]);
+    // await Bootcamp.create(bootcamps);
 
     // bootcamps.forEach(async (singleBootcamp) => {
     //   const bootcamp = new Bootcamp(singleBootcamp);
