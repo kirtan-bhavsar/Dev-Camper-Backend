@@ -10,16 +10,40 @@ import geocoder from "../utils/getcoder.js";
 const getAllBootcamps = asyncHander(async (req, res, next) => {
   let query;
 
-  let queryStr = JSON.stringify(req.query);
+  const reqQuery = { ...req.query };
+
+  // console.log(reqQuery);
+
+  // fields not to be included in reqQuery
+  const excludeFields = ["select", "sort"];
+
+  // reqQuery = reqQuery.forEach((param) => delete reqQuery[param]);
+  excludeFields.forEach((param) => delete reqQuery[param]);
+
+  console.log(reqQuery);
+
+  let queryStr = JSON.stringify(reqQuery);
 
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
 
-  console.log(JSON.parse(queryStr));
-
   query = Bootcamp.find(JSON.parse(queryStr));
+
+  // to implement if select is used in query string, to select specific fields
+  if (req.query.select) {
+    const fields = req.query.select.split(",").join(" ");
+    query = query.select(fields);
+  }
+
+  // to implement sort, if sort is used in query string, to sort the elements
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
 
   // const query = req.query;
 
