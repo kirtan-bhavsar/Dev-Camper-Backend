@@ -63,7 +63,7 @@ const getBootcampById = asyncHander(async (req, res, next) => {
   res.status(200).json(bootcamp);
 });
 
-// @desc create
+// @desc create bootcamp
 // @route POST /api/v1/bootcamps
 // @access public
 const createBootcamp = asyncHander(async (req, res, next) => {
