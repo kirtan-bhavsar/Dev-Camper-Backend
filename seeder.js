@@ -1,4 +1,5 @@
 import Bootcamp from "./models/Bootcamp.js";
+import Course from "./models/Course.js";
 import mongoose from "mongoose";
 import colors from "colors";
 import fs from "fs";
@@ -30,6 +31,9 @@ mongoose
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
 );
+const courses = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
+);
 
 // Performing import data
 const importData = async () => {
@@ -46,6 +50,11 @@ const importData = async () => {
       const bootcamp = new Bootcamp(singleBootcamp);
       console.log(bootcamp, "bootcamp printed");
       await bootcamp.save();
+    }
+
+    for (const singleCourse of courses) {
+      const course = new Course(singleCourse);
+      await course.save();
     }
 
     // const bootcamp = new Bootcamp(bootcamps);
