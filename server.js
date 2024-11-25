@@ -21,10 +21,12 @@ if (process.env.NODE_ENV === "development") {
 // Route Files
 import demoRouter from "./routes/demoRoutes.js";
 import bootcampRouter from "./routes/bootcampRoutes.js";
+import courseRouter from "./routes/courseRoutes.js";
 
 // Mount Routers
 app.use("/api/demos", demoRouter);
 app.use("/api/v1/bootcamps", bootcampRouter);
+app.use("/api/v1/courses", courseRouter);
 
 app.use(errorHandler);
 
