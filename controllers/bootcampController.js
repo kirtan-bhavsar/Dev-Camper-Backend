@@ -15,7 +15,13 @@ const getAllBootcamps = asyncHander(async (req, res, next) => {
   // console.log(reqQuery);
 
   // fields not to be included in reqQuery
-  const excludeFields = ["select", "sort"];
+  const excludeFields = ["select", "sort", "page", "limit"];
+
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 1;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await Bootcamp.countDocuments();
 
   // reqQuery = reqQuery.forEach((param) => delete reqQuery[param]);
   excludeFields.forEach((param) => delete reqQuery[param]);
@@ -30,6 +36,38 @@ const getAllBootcamps = asyncHander(async (req, res, next) => {
   );
 
   query = Bootcamp.find(JSON.parse(queryStr));
+
+  query = query.skip(startIndex).limit(limit);
+
+  const pagination = {};
+
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
+
+  // if (page < total / limit) {
+  //   pagination.next = {
+  //     page: page + 1,
+  //     limit,
+  //   };
+  // }
+
+  // if (page > 1) {
+  //   pagination.prev = {
+  //     page: page - 1,
+  //     limit,
+  //   };
+  // }
 
   // to implement if select is used in query string, to select specific fields
   if (req.query.select) {
@@ -59,9 +97,12 @@ const getAllBootcamps = asyncHander(async (req, res, next) => {
       .status(400)
       .json({ success: false, message: "No Bootcmaps exists" });
   }
-  res
-    .status(200)
-    .json({ success: true, count: bootcamps.length, data: bootcamps });
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    pagination,
+    data: bootcamps,
+  });
 });
 
 // @desc get bootcamp by Id
