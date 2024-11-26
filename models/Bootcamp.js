@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
 import geocoder from "../utils/getcoder.js";
+import Course from "../models/Course.js";
 
 const bootcampSchema = new mongoose.Schema(
   {
@@ -108,7 +109,17 @@ bootcampSchema.virtual("courses", {
 
 // A document middleware to make a slug based on the name of the bootcamp
 bootcampSchema.pre("save", function (next) {
+  console.log(this.model, "this being printed");
   this.slug = slugify(this.name);
+  next();
+});
+
+// Cascade delete i.e automatically delete all courses associated with a bootcamp when it is deleted.
+bootcampSchema.pre("findOneAndDelete", async function (next) {
+  const bootcampId = this.getQuery()._id;
+  console.log(`All courses deleted associated with id : ${bootcampId}`);
+  // await this.model("Course").deleteMany({ bootcamp: bootcampId });
+  await Course.deleteMany({ bootcamp: bootcampId });
   next();
 });
 

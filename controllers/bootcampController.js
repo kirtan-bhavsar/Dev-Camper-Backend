@@ -173,7 +173,7 @@ const updateBootcampById = asyncHander(async (req, res, next) => {
 const deleteBootcampById = asyncHander(async (req, res, next) => {
   const bootcampId = req.params.id;
 
-  const bootcamp = await Bootcamp.findById(bootcampId);
+  const bootcamp = await Bootcamp.findByIdAndDelete(bootcampId);
 
   if (!bootcamp) {
     return next(
@@ -184,7 +184,7 @@ const deleteBootcampById = asyncHander(async (req, res, next) => {
     );
   }
 
-  await Bootcamp.findByIdAndDelete(bootcampId);
+  // await bootcamp.deleteOne();
 
   res
     .status(200)
