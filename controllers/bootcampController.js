@@ -35,7 +35,7 @@ const getAllBootcamps = asyncHander(async (req, res, next) => {
     (match) => `$${match}`
   );
 
-  query = Bootcamp.find(JSON.parse(queryStr));
+  query = Bootcamp.find(JSON.parse(queryStr)).populate("courses");
 
   query = query.skip(startIndex).limit(limit);
 
