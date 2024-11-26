@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import Course from "../models/Course.js";
 import asyncHandler from "express-async-handler";
+import Bootcamp from "../models/Bootcamp.js";
 
 // @desc get all course or get courses of specific boocamp
 // @api GET api/v1/courses or GET api/v1/bootcamps/:bootcampId/courses
@@ -26,8 +27,8 @@ const getCourses = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc get all course or get courses of specific boocamp
-// @api GET api/v1/courses or GET api/v1/bootcamps/:bootcampId/courses
+// @desc get course by specific Id
+// @api GET api/v1/courses/:id
 // @access public
 const getCourseById = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
@@ -46,4 +47,29 @@ const getCourseById = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { getCourses, getCourseById };
+// @desc create course for specific bootcamp
+// @api GET api/v1/bootcamps/:id/courses
+// @access private
+const createCourse = asyncHandler(async (req, res, next) => {
+  req.body.bootcamp = req.params.bootcampId;
+
+  const bootcamp = await Bootcamp.findById(req.params.bootcampId);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(
+        `No bootcamp found for id : ${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  const course = await Course.create(req.body);
+
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+export { getCourses, getCourseById, createCourse };
