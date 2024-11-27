@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Bootcamp from "./Bootcamp.js";
+import colors from "colors";
 
 const courseSchema = new mongoose.Schema({
   title: {
@@ -36,6 +38,40 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+courseSchema.statics.getAverageCost = async function (bootcampId) {
+  console.log("Calculation average cost...".blue.bold);
+
+  const obj = await this.aggregate([
+    {
+      $match: {
+        bootcamp: bootcampId,
+      },
+    },
+    {
+      $group: {
+        _id: "$bootcamp",
+        averageCost: { $avg: "$tuition" },
+      },
+    },
+  ]);
+
+  try {
+    await Bootcamp.findByIdAndUpdate(bootcampId, {
+      averageCost: Math.ceil(obj[0].averageCost / 10) * 10,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+courseSchema.post("save", async function () {
+  await this.constructor.getAverageCost(this.bootcamp);
+});
+
+courseSchema.pre("findOneAndDelete", async function () {
+  await this.model.getAverageCost(this.bootcamp);
 });
 
 export default mongoose.model("Course", courseSchema);
