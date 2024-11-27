@@ -4,6 +4,7 @@ import {
   getCourses,
   createCourse,
   updateCourseById,
+  deleteCourseById,
 } from "../controllers/courseController.js";
 import express from "express";
 
@@ -14,5 +15,6 @@ courseRouter.get("/", getCourses);
 courseRouter.get("/:id", getCourseById);
 courseRouter.post("/", createCourse);
 courseRouter.put("/:id", updateCourseById);
+courseRouter.delete("/:id", deleteCourseById);
 
 export { courseRouter as default };

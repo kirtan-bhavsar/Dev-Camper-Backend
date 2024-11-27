@@ -37,7 +37,7 @@ const getCourseById = asyncHandler(async (req, res, next) => {
 
   if (!course) {
     return next(
-      new ErrorResponsez(`No course found for the id : ${courseId}`, 404)
+      new ErrorResponse(`No course found for the id : ${courseId}`, 404)
     );
   }
 
@@ -96,4 +96,32 @@ const updateCourseById = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { getCourses, getCourseById, createCourse, updateCourseById };
+// @desc delete course
+// @api DELETE api/v1/courses/:id
+// @access private
+const deleteCourseById = asyncHandler(async (req, res, next) => {
+  const courseId = req.params.id;
+
+  let course = await Course.findById(courseId);
+
+  if (!course) {
+    return next(
+      new ErrorResponse(`No course found for the id : ${courseId}`, 404)
+    );
+  }
+
+  course = await Course.findByIdAndDelete(courseId);
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
+
+export {
+  getCourses,
+  getCourseById,
+  createCourse,
+  updateCourseById,
+  deleteCourseById,
+};
