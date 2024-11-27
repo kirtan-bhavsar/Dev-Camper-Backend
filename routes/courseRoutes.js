@@ -3,6 +3,7 @@ import {
   getCourseById,
   getCourses,
   createCourse,
+  updateCourseById,
 } from "../controllers/courseController.js";
 import express from "express";
 
@@ -12,5 +13,6 @@ const courseRouter = express.Router({ mergeParams: true });
 courseRouter.get("/", getCourses);
 courseRouter.get("/:id", getCourseById);
 courseRouter.post("/", createCourse);
+courseRouter.put("/:id", updateCourseById);
 
 export { courseRouter as default };

@@ -72,4 +72,28 @@ const createCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { getCourses, getCourseById, createCourse };
+// @desc update course
+// @api GET api/v1/courses/:id
+// @access private
+const updateCourseById = asyncHandler(async (req, res, next) => {
+  const courseId = req.params.id;
+
+  let course = await Course.findById(courseId);
+
+  if (!course) {
+    return next(
+      new ErrorResponse(`No course found for the id : ${courseId}`, 404)
+    );
+  }
+
+  course = await Course.findByIdAndUpdate(courseId, req.body, {
+    new: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+export { getCourses, getCourseById, createCourse, updateCourseById };
