@@ -7,11 +7,20 @@ import {
   deleteCourseById,
 } from "../controllers/courseController.js";
 import express from "express";
+import advancedResults from "../middleware/advancedResults.js";
+import Course from "../models/Course.js";
 
 // here we add the mergeParams:true to enable cross API functionality
 const courseRouter = express.Router({ mergeParams: true });
 
-courseRouter.get("/", getCourses);
+courseRouter.get(
+  "/",
+  advancedResults(Course, {
+    path: "bootcamp",
+    select: "name description",
+  }),
+  getCourses
+);
 courseRouter.get("/:id", getCourseById);
 courseRouter.post("/", createCourse);
 courseRouter.put("/:id", updateCourseById);

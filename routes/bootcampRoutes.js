@@ -5,11 +5,16 @@ import {
   createBootcamp,
   getBootcampById,
   getBootcampsByDistance,
+  uploadPhotoForBootcamp,
 } from "../controllers/bootcampController.js";
 
 import courseRouter from "./courseRoutes.js";
 
 import express from "express";
+
+import advancedResults from "../middleware/advancedResults.js";
+
+import Bootcamp from "../models/Bootcamp.js";
 
 const bootcampRouter = express.Router();
 
@@ -21,11 +26,15 @@ const bootcampRouter = express.Router();
 
 bootcampRouter.use("/:bootcampId/courses", courseRouter);
 bootcampRouter.get("/radius/:zipcode/:distance", getBootcampsByDistance);
-bootcampRouter.route("/").get(getAllBootcamps).post(createBootcamp);
+bootcampRouter
+  .route("/")
+  .get(advancedResults(Bootcamp, "courses"), getAllBootcamps)
+  .post(createBootcamp);
 bootcampRouter
   .route("/:id")
   .get(getBootcampById)
   .put(updateBootcampById)
   .delete(deleteBootcampById);
+bootcampRouter.put("/:id/photo", uploadPhotoForBootcamp);
 
 export { bootcampRouter as default };

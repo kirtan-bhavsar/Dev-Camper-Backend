@@ -52,10 +52,10 @@ const importData = async () => {
       await bootcamp.save();
     }
 
-    // for (const singleCourse of courses) {
-    //   const course = new Course(singleCourse);
-    //   await course.save();
-    // }
+    for (const singleCourse of courses) {
+      const course = new Course(singleCourse);
+      await course.save();
+    }
 
     // const bootcamp = new Bootcamp(bootcamps);
 
