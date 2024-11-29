@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 const userSchema = mongoose.Schema({
   name: {
@@ -34,11 +36,19 @@ const userSchema = mongoose.Schema({
   },
 });
 
+dotenv.config();
+
 // Encrypting password before saving it to the database
 userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
 
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.methods.getSignedToken = function (next) {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
 
 export default mongoose.model("User", userSchema);

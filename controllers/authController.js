@@ -15,7 +15,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
     role,
   });
 
-  res.status(200).json({ success: true });
+  const token = user.getSignedToken();
+
+  res.status(200).json({ success: true, data: token });
 });
 
 export { registerUser };
