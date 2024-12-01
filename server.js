@@ -9,6 +9,7 @@ import file from "express-fileupload";
 import fileupload from "express-fileupload";
 import path from "path";
 import url from "url";
+import cookieParser from "cookie-parser";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(fileupload());
+app.use(cookieParser());
 
 // Route Files
 import demoRouter from "./routes/demoRoutes.js";
