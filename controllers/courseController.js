@@ -2,8 +2,9 @@ import expressAsyncHandler from "express-async-handler";
 import Course from "../models/Course.js";
 import asyncHandler from "express-async-handler";
 import Bootcamp from "../models/Bootcamp.js";
+import ErrorResponse from "../utils/errorResponse.js";
 
-// @desc get all course or get courses of specific boocamp
+// @desc get all course or get courses of specific bootcamp
 // @api GET api/v1/courses or GET api/v1/bootcamps/:bootcampId/courses
 // @access public
 const getCourses = asyncHandler(async (req, res, next) => {
