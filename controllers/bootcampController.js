@@ -43,6 +43,20 @@ const getBootcampById = asyncHander(async (req, res, next) => {
 // @route POST /api/v1/bootcamps
 // @access public
 const createBootcamp = asyncHander(async (req, res, next) => {
+  req.body.user = req.user.id;
+
+  console.log(req.user);
+
+  const isBootcampPublished = await Bootcamp.findOne({ user: req.user.id });
+
+  if (isBootcampPublished && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `The user with role ${req.user.role} can only publish one bootcamp`
+      )
+    );
+  }
+
   const bootcamp = await Bootcamp.create(req.body);
 
   res.status(201).json({

@@ -39,13 +39,20 @@ const loginUser = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(
+      new ErrorResponse(
+        "Invalid Credentials as no email id found for this id",
+        401
+      )
+    );
   }
 
   const isMatch = await user.matchPassword(password);
 
   if (!isMatch) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(
+      new ErrorResponse("Invalid Credentials as password does not matches", 401)
+    );
   }
 
   // instead of the below two lines, the we generated a seperate function to be called

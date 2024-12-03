@@ -41,8 +41,9 @@ dotenv.config();
 // Encrypting password before saving it to the database
 userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
-
+  console.log("encrypting password works !");
   this.password = await bcrypt.hash(this.password, salt);
+  console.log(this.password);
 });
 
 userSchema.methods.getSignedToken = function () {
@@ -52,6 +53,7 @@ userSchema.methods.getSignedToken = function () {
 };
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  console.log(this);
   console.log(enteredPassword, this.password, "passwords");
   return await bcrypt.compare(enteredPassword, this.password);
 };

@@ -93,6 +93,11 @@ const bootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -123,7 +128,7 @@ bootcampSchema.pre("findOneAndDelete", async function (next) {
   next();
 });
 
-// A geocoder middleware to conver a given address to geocode
+// A geocoder middleware to convert a given address to geocode
 bootcampSchema.pre("save", async function (next) {
   console.log("waiting".red.inverse);
   const loc = await geocoder.geocode(this.address);
