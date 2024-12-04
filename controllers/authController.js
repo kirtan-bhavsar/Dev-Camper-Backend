@@ -64,6 +64,42 @@ const loginUser = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc
+// @api GET api/v1/auth/me
+// access private
+const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+// @desc  send token to registered email-id when hitted the route
+// @api POST api/v1/auth/forgotpassword
+// access public
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(`No user found for the email : ${req.body.email}`, 401)
+    );
+  }
+
+  const resetToken = user.getResetToken();
+
+  console.log(resetToken);
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
 const sendTokenResponse = async (user, statusCode, res) => {
   const token = await user.getSignedToken();
 
@@ -80,13 +116,4 @@ const sendTokenResponse = async (user, statusCode, res) => {
   });
 };
 
-const getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
-});
-
-export { registerUser, loginUser, getMe };
+export { registerUser, loginUser, getMe, forgotPassword };

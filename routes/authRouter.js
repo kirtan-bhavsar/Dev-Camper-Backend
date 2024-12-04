@@ -1,4 +1,5 @@
 import {
+  forgotPassword,
   getMe,
   loginUser,
   registerUser,
@@ -12,5 +13,6 @@ const authRouter = express.Router();
 authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
 authRouter.get("/me", protect, getMe);
+authRouter.post("/forgotpassword", forgotPassword);
 
 export default authRouter;
