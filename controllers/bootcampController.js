@@ -69,36 +69,11 @@ const createBootcamp = asyncHander(async (req, res, next) => {
 // @route PUT /api/v1/bootcamps/:id
 // @access public
 const updateBootcampById = asyncHander(async (req, res, next) => {
-  const bootcamp = req.body;
+  const bootcampBody = req.body;
 
   const bootcampId = req.params.id;
 
-  const updatedBootcamp = await Bootcamp.findByIdAndUpdate(
-    bootcampId,
-    bootcamp,
-    {
-      new: true,
-    }
-  );
-
-  if (!updatedBootcamp) {
-    return next(
-      new ErrorResponse(
-        `No bootcamp found for the provided id : ${bootcampId}`,
-        404
-      )
-    );
-  }
-  res.status(200).json(updatedBootcamp);
-});
-
-// @desc delete bootcamp by id
-// @route DELETE /api/v1/bootcamps/:id
-// @access public
-const deleteBootcampById = asyncHander(async (req, res, next) => {
-  const bootcampId = req.params.id;
-
-  const bootcamp = await Bootcamp.findByIdAndDelete(bootcampId);
+  let bootcamp = await Bootcamp.findById(bootcampId);
 
   if (!bootcamp) {
     return next(
@@ -108,6 +83,44 @@ const deleteBootcampById = asyncHander(async (req, res, next) => {
       )
     );
   }
+
+  if (req.user.id !== bootcamp.user.toString() && req.user.role !== "admin") {
+    console.log(req.user.id, bootcamp.user.toString());
+    return next(new ErrorResponse("User is not owner of the bootcamp"));
+  }
+
+  bootcamp = await Bootcamp.findByIdAndUpdate(bootcampId, bootcamp, {
+    new: true,
+  });
+
+  res.status(200).json(bootcamp);
+});
+
+// @desc delete bootcamp by id
+// @route DELETE /api/v1/bootcamps/:id
+// @access public
+const deleteBootcampById = asyncHander(async (req, res, next) => {
+  const bootcampId = req.params.id;
+
+  let bootcamp = await Bootcamp.findById(bootcampId);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(
+        `No bootcamp found for the provided id : ${bootcampId}`,
+        404
+      )
+    );
+  }
+
+  if (req.user.id !== bootcamp.user.toString()) {
+    console.log(req.user.id, bootcamp.user.toString());
+    return next(
+      new ErrorResponse("User is not owner of the bootcamp, yeah that's true")
+    );
+  }
+
+  bootcamp = await Bootcamp.findByIdAndDelete(bootcampId);
 
   // await bootcamp.deleteOne();
 

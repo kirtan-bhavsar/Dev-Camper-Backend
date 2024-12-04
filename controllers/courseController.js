@@ -1,4 +1,3 @@
-import expressAsyncHandler from "express-async-handler";
 import Course from "../models/Course.js";
 import asyncHandler from "express-async-handler";
 import Bootcamp from "../models/Bootcamp.js";
@@ -49,6 +48,8 @@ const getCourseById = asyncHandler(async (req, res, next) => {
 const createCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
 
+  req.body.user = req.user.id;
+
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
@@ -56,6 +57,15 @@ const createCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `No bootcamp found for id : ${req.params.bootcampId}`,
         404
+      )
+    );
+  }
+
+  if (req.user.id !== bootcamp.user.toString() && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        "User is not owner of the bootcamp, hence cannot create a course for this bootcamp.",
+        401
       )
     );
   }
@@ -75,6 +85,15 @@ const updateCourseById = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
 
   let course = await Course.findById(courseId);
+
+  if (req.user.id !== course.user.toString() && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        "User is not owner of the bootcamp, hence cannot create a course for this bootcamp.",
+        401
+      )
+    );
+  }
 
   if (!course) {
     return next(
@@ -99,6 +118,15 @@ const deleteCourseById = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
 
   let course = await Course.findById(courseId);
+
+  if (req.user.id !== course.user.toString() && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        "User is not owner of the bootcamp, hence cannot create a course for this bootcamp.",
+        401
+      )
+    );
+  }
 
   if (!course) {
     return next(
