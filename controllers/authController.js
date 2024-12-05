@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import dotenv from "dotenv";
+import sendEmail from "../utils/sendEmail.js";
 
 dotenv.config();
 
@@ -88,16 +89,34 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const resetToken = user.getResetToken();
+  const resetToken = await user.getResetToken();
 
-  console.log(resetToken);
+  console.log(resetToken, "reset token");
 
   await user.save({ validateBeforeSave: false });
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+  const resetURL = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/auth/resetpassword/${resetToken}`;
+
+  const message = `Please find the link to reset password \n\n ${resetURL}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset Token",
+      message,
+    });
+
+    res.status(200).json({ success: true, data: "Email Sent" });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse("Email could not be sent", 500));
+  }
 });
 
 const sendTokenResponse = async (user, statusCode, res) => {
