@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import dotenv from "dotenv";
 import sendEmail from "../utils/sendEmail.js";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -99,7 +100,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     "host"
   )}/api/v1/auth/resetpassword/${resetToken}`;
 
-  const message = `Please find the link to reset password \n\n ${resetURL}`;
+  const message = `Please find the link to reset password, and make a put request to the same \n\n ${resetURL}`;
 
   try {
     await sendEmail({
@@ -119,6 +120,25 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
+const resetNewPassword = asyncHandler(async (req, res, next) => {
+  const resetToken = req.params.resetToken;
+
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  const user = await User.findOne({ resetPasswordToken });
+
+  const updatedPassword = req.body.password;
+
+  user.password = updatedPassword;
+
+  user.save();
+
+  res.status(200).json({ success: true, data: resetToken, user: user });
+});
+
 const sendTokenResponse = async (user, statusCode, res) => {
   const token = await user.getSignedToken();
 
@@ -135,4 +155,4 @@ const sendTokenResponse = async (user, statusCode, res) => {
   });
 };
 
-export { registerUser, loginUser, getMe, forgotPassword };
+export { registerUser, loginUser, getMe, forgotPassword, resetNewPassword };
