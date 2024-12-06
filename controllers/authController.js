@@ -120,6 +120,9 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc api to reset the password
+// @api PUT api/v1/auth/resetpassword/:resetToken
+// @access public
 const resetNewPassword = asyncHandler(async (req, res, next) => {
   const resetToken = req.params.resetToken;
 
@@ -148,6 +151,23 @@ const resetNewPassword = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc api to reset the password
+// @api PUT api/v1/auth/resetpassword/:resetToken
+// @access public
+const updateUserDetails = asyncHandler(async (req, res, next) => {
+  const fieldsToUpdate = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({ success: true, user });
+});
+
 const sendTokenResponse = async (user, statusCode, res) => {
   const token = await user.getSignedToken();
 
@@ -164,4 +184,11 @@ const sendTokenResponse = async (user, statusCode, res) => {
   });
 };
 
-export { registerUser, loginUser, getMe, forgotPassword, resetNewPassword };
+export {
+  registerUser,
+  loginUser,
+  getMe,
+  forgotPassword,
+  resetNewPassword,
+  updateUserDetails,
+};
