@@ -3,8 +3,9 @@ import {
   getMe,
   loginUser,
   registerUser,
-  resetNewPassword,
+  resetPassword,
   updateUserDetails,
+  updateUserPassword,
 } from "../controllers/authController.js";
 import mongoose from "mongoose";
 import express from "express";
@@ -16,7 +17,8 @@ authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
 authRouter.get("/me", protect, getMe);
 authRouter.post("/forgotpassword", forgotPassword);
-authRouter.put("/resetpassword/:resetToken", resetNewPassword);
+authRouter.put("/resetpassword/:resetToken", resetPassword);
 authRouter.put("/updatedetails", protect, updateUserDetails);
+authRouter.put("/updatepassword", protect, updateUserPassword);
 
 export default authRouter;

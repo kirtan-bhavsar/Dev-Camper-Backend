@@ -123,7 +123,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 // @desc api to reset the password
 // @api PUT api/v1/auth/resetpassword/:resetToken
 // @access public
-const resetNewPassword = asyncHandler(async (req, res, next) => {
+const resetPassword = asyncHandler(async (req, res, next) => {
   const resetToken = req.params.resetToken;
 
   const resetPasswordToken = crypto
@@ -153,7 +153,7 @@ const resetNewPassword = asyncHandler(async (req, res, next) => {
 
 // @desc api to reset the password
 // @api PUT api/v1/auth/resetpassword/:resetToken
-// @access public
+// @access private
 const updateUserDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
     name: req.body.name,
@@ -166,6 +166,23 @@ const updateUserDetails = asyncHandler(async (req, res, next) => {
   });
 
   res.status(200).json({ success: true, user });
+});
+
+// @desc change password by user
+// @api PUT api/v1/auth/
+// @access private
+const updateUserPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse("No user found", 404));
+  }
+
+  user.password = req.body.newPassword;
+
+  user.save();
+
+  sendTokenResponse(user, 200, res);
 });
 
 const sendTokenResponse = async (user, statusCode, res) => {
@@ -189,6 +206,7 @@ export {
   loginUser,
   getMe,
   forgotPassword,
-  resetNewPassword,
+  resetPassword,
   updateUserDetails,
+  updateUserPassword,
 };
