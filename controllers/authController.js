@@ -128,15 +128,24 @@ const resetNewPassword = asyncHandler(async (req, res, next) => {
     .update(resetToken)
     .digest("hex");
 
-  const user = await User.findOne({ resetPasswordToken });
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse("Invalid Token", 400));
+  }
 
   const updatedPassword = req.body.password;
 
   user.password = updatedPassword;
-
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
   user.save();
 
-  res.status(200).json({ success: true, data: resetToken, user: user });
+  // res.status(200).json({ success: true, data: resetToken, user: user });
+  sendTokenResponse(user, 200, res);
 });
 
 const sendTokenResponse = async (user, statusCode, res) => {
