@@ -9,6 +9,7 @@ import {
 } from "../controllers/bootcampController.js";
 
 import courseRouter from "./courseRoutes.js";
+import reviewRouter from "../routes/reviewRoutes.js";
 
 import express from "express";
 
@@ -26,7 +27,10 @@ const bootcampRouter = express.Router();
 // bootcampRouter.put("/:id", updateBootcampById);
 // bootcampRouter.delete("/:id", deleteBootcampById);
 
+// for cross model querying like, getting courses/reviews of a specific bootcamp
 bootcampRouter.use("/:bootcampId/courses", courseRouter);
+bootcampRouter.use("/:bootcampId/reviews", reviewRouter);
+
 bootcampRouter.get("/radius/:zipcode/:distance", getBootcampsByDistance);
 bootcampRouter
   .route("/")
