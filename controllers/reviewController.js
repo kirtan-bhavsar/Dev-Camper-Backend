@@ -23,9 +23,6 @@ const getReviews = asyncHandler(async (req, res, next) => {
   // as we are using const result = await query in advancedResults middleware
 });
 
-// @desc get all course or get courses of specific bootcamp
-// @api GET api/v1/courses or GET api/v1/bootcamps/:bootcampId/courses
-// @access public
 const getReview = asyncHandler(async (req, res, next) => {
   const review = await Review.findById(req.params.id).populate({
     path: "bootcamp",
@@ -34,7 +31,7 @@ const getReview = asyncHandler(async (req, res, next) => {
 
   if (!review) {
     return next(
-      new ErrorResponse(`No review found with the id : ${req.params.id}`, 404)
+      new ErrorResponse(`No review found for the id : ${req.params.id}`)
     );
   }
 
@@ -43,5 +40,4 @@ const getReview = asyncHandler(async (req, res, next) => {
     data: review,
   });
 });
-
 export { getReviews, getReview };
