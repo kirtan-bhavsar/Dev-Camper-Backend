@@ -1,6 +1,7 @@
 import Bootcamp from "./models/Bootcamp.js";
 import Course from "./models/Course.js";
 import User from "./models/User.js";
+import Review from "./models/Review.js";
 import mongoose from "mongoose";
 import colors from "colors";
 import fs from "fs";
@@ -38,6 +39,9 @@ const courses = JSON.parse(
 const users = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
 );
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
+);
 
 // Performing import data
 const importData = async () => {
@@ -66,6 +70,11 @@ const importData = async () => {
       await user.save();
     }
 
+    for (const singleReview of reviews) {
+      const review = await Review.create(singleReview);
+      review.save();
+    }
+
     // const bootcamp = new Bootcamp(bootcamps);
 
     // await bootcamp.save();
@@ -82,6 +91,7 @@ const destroyData = async () => {
     await Bootcamp.deleteMany();
     await Course.deleteMany();
     await User.deleteMany();
+    await Review.deleteMany();
     console.log("Data destroyed...".red.inverse);
   } catch (error) {
     console.log(error);
