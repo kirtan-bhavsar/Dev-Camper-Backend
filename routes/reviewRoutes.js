@@ -1,5 +1,9 @@
 import express from "express";
-import { getReviews, getReview } from "../controllers/reviewController.js";
+import {
+  getReviews,
+  getReview,
+  addReview,
+} from "../controllers/reviewController.js";
 import { authorize, protect } from "../middleware/auth.js";
 import getAdvancedResults from "../middleware/advancedResults.js";
 import advancedResults from "../middleware/advancedResults.js";
@@ -17,5 +21,8 @@ reviewRouter.get(
 );
 
 reviewRouter.get("/:id", getReview);
+
+// reviewRouter.post("/", authorize('admin','user'), protect, addReview);
+reviewRouter.post("/", protect, authorize("admin", "user"), addReview);
 
 export default reviewRouter;
