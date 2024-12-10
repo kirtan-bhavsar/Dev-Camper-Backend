@@ -62,6 +62,8 @@ const addReview = asyncHandler(async (req, res, next) => {
 
   const review = await Review.create(req.body);
 
+  await review.save();
+
   res.status(201).json({
     success: true,
     data: review,

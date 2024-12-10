@@ -37,4 +37,74 @@ const reviewSchema = new mongoose.Schema({
 
 reviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
 
+reviewSchema.statics.getAverageRating = async function (bootcampId) {
+  const obj = await this.aggregate([
+    { $match: { bootcamp: bootcampId } },
+    {
+      $group: {
+        _id: "$bootcamp",
+        averageRating: {
+          $avg: "$rating",
+        },
+      },
+    },
+  ]);
+
+  try {
+    await Bootcamp.findByIdAndUpdate(
+      bootcampId,
+      {
+        averageRating: obj[0].averageRating,
+      },
+      {
+        new: true,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+reviewSchema.pre("save", async function () {
+  await this.constructor.getAverageRating(this.bootcamp);
+});
+
+reviewSchema.post("findOneAndDelete", async function () {
+  await this.model.getAverageRating(this.bootcamp);
+});
+
 export default mongoose.model("Review", reviewSchema);
+
+// -----demo----
+
+// reviewSchema.statics.getAverageRating = async function (bootcampId) {
+//   const obj = await this.aggregate([
+//     {
+//       $match: {
+//         bootcamp: bootcampId,
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: "$bootcamp",
+//         averageRating: { $avg: "$rating" },
+//       },
+//     },
+//   ]);
+
+//   try {
+//     await Bootcamp.findByIdAndUpdate(bootcampId, {
+//       averageRating: obj[0].averageRating,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// reviewSchema.pre("save", async function () {
+//   await this.constructor.getAverageRating(this.bootcamp);
+// });
+
+// reviewSchema.post("findOneAndDelete", async function () {
+//   await this.model.getAverageRating(this.bootcamp);
+// });
