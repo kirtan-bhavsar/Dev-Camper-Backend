@@ -73,4 +73,26 @@ const addReview = asyncHandler(async (req, res, next) => {
   //   data: "data",
   // });
 });
-export { getReviews, getReview, addReview };
+
+// @desc delete review by id
+// @api DELETE api/v1/reviews/:id
+// access private
+const deleteReviewById = asyncHandler(async (req, res, next) => {
+  const reivewId = req.params.id;
+  const currentUser = req.user.id;
+  const review = await Review.findById(reivewId);
+  const user = review.user.toString();
+
+  if (!review) {
+    return next(new ErrorResponse("No review found by this id", 404));
+  }
+
+  if (currentUser === user) {
+    await Review.findOneAndDelete(review);
+    res.status(200).json({
+      success: true,
+      data: {},
+    });
+  }
+});
+export { getReviews, getReview, addReview, deleteReviewById };
