@@ -62,8 +62,6 @@ const addReview = asyncHandler(async (req, res, next) => {
 
   const review = await Review.create(req.body);
 
-  await review.save();
-
   res.status(201).json({
     success: true,
     data: review,
@@ -80,7 +78,7 @@ const addReview = asyncHandler(async (req, res, next) => {
 const deleteReviewById = asyncHandler(async (req, res, next) => {
   const reivewId = req.params.id;
   const currentUser = req.user.id;
-  const review = await Review.findById(reivewId);
+  let review = await Review.findById(reivewId);
   const user = review.user.toString();
 
   if (!review) {
@@ -88,11 +86,38 @@ const deleteReviewById = asyncHandler(async (req, res, next) => {
   }
 
   if (currentUser === user) {
-    await Review.findOneAndDelete(review);
+    review = await Review.findByIdAndDelete(reivewId);
     res.status(200).json({
       success: true,
       data: {},
     });
   }
 });
-export { getReviews, getReview, addReview, deleteReviewById };
+
+// @desc update review by id
+// @api PUT api/v1/reviews/:id
+// access private
+const updateReviewById = asyncHandler(async (req, res, next) => {
+  const reivewId = req.params.id;
+  const currentUser = req.user.id;
+  let review = await Review.findById(reivewId);
+  const user = review.user.toString();
+
+  if (!review) {
+    return next(new ErrorResponse("No review found by this id", 404));
+  }
+
+  if (currentUser === user) {
+    review = await Review.findByIdAndUpdate(reivewId, req.body, {
+      runValidators: true,
+      new: true,
+    });
+    await review.save();
+    res.status(200).json({
+      success: true,
+      data: review,
+    });
+  }
+});
+
+export { getReviews, getReview, addReview, deleteReviewById, updateReviewById };

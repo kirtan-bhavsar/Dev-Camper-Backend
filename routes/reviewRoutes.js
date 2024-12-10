@@ -4,6 +4,7 @@ import {
   getReview,
   addReview,
   deleteReviewById,
+  updateReviewById,
 } from "../controllers/reviewController.js";
 import { authorize, protect } from "../middleware/auth.js";
 import getAdvancedResults from "../middleware/advancedResults.js";
@@ -27,5 +28,7 @@ reviewRouter.get("/:id", getReview);
 reviewRouter.post("/", protect, authorize("admin", "user"), addReview);
 
 reviewRouter.delete("/:id", protect, deleteReviewById);
+
+reviewRouter.put("/:id", protect, updateReviewById);
 
 export default reviewRouter;
