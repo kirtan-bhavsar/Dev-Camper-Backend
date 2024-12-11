@@ -11,6 +11,11 @@ import path from "path";
 import url from "url";
 import cookieParser from "cookie-parser";
 import mongoSanitize from "express-mongo-sanitize";
+import helmet from "helmet";
+import xss from "xss-clean";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import cors from "cors";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,8 +25,30 @@ const app = express();
 const mongoUri = process.env.MONGO_URI;
 
 app.use(express.json());
-app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, "public")));
+
+// to limit the number of requests coming to the server in a specific time interval
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+
+// to allow cross origin resource sharing
+app.use(cors());
+
+// to prevent http param pollute
+app.use(hpp());
+
+// to prevent cross site scripting
+app.use(xss());
+
+// to add necessary security headers to the API
+app.use(helmet());
+
+// to prevent SQL Injection attacks
+app.use(mongoSanitize());
 
 // app.use(logger);
 // Morgan middleware
