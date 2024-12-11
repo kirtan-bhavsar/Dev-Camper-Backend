@@ -27,8 +27,13 @@ reviewRouter.get("/:id", getReview);
 // reviewRouter.post("/", authorize('admin','user'), protect, addReview);
 reviewRouter.post("/", protect, authorize("admin", "user"), addReview);
 
-reviewRouter.delete("/:id", protect, deleteReviewById);
+reviewRouter.delete(
+  "/:id",
+  protect,
+  authorize("admin", "user"),
+  deleteReviewById
+);
 
-reviewRouter.put("/:id", protect, updateReviewById);
+reviewRouter.put("/:id", protect, authorize("admin", "user"), updateReviewById);
 
 export default reviewRouter;

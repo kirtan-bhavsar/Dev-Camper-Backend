@@ -85,13 +85,17 @@ const deleteReviewById = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("No review found by this id", 404));
   }
 
-  if (currentUser === user) {
-    review = await Review.findByIdAndDelete(reivewId);
-    res.status(200).json({
-      success: true,
-      data: {},
-    });
+  if (currentUser !== user && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse("User not authorized to perform this action", 401)
+    );
   }
+
+  review = await Review.findByIdAndDelete(reivewId);
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
 });
 
 // @desc update review by id
@@ -107,17 +111,21 @@ const updateReviewById = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("No review found by this id", 404));
   }
 
-  if (currentUser === user) {
-    review = await Review.findByIdAndUpdate(reivewId, req.body, {
-      runValidators: true,
-      new: true,
-    });
-    await review.save();
-    res.status(200).json({
-      success: true,
-      data: review,
-    });
+  if (currentUser !== user && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse("User not authorized to perform this action", 401)
+    );
   }
+
+  review = await Review.findByIdAndUpdate(reivewId, req.body, {
+    runValidators: true,
+    new: true,
+  });
+  await review.save();
+  res.status(200).json({
+    success: true,
+    data: review,
+  });
 });
 
 export { getReviews, getReview, addReview, deleteReviewById, updateReviewById };

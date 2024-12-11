@@ -71,10 +71,14 @@ courseSchema.statics.getAverageCost = async function (bootcampId) {
 
 courseSchema.post("save", async function () {
   await this.constructor.getAverageCost(this.bootcamp);
+  console.log("get average cost being called on saving the review");
 });
 
-courseSchema.pre("findOneAndDelete", async function () {
-  await this.model.getAverageCost(this.bootcamp);
+courseSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await this.model.getAverageCost(doc.bootcamp);
+    console.log("delete review getAverageRating middleware called");
+  }
 });
 
 export default mongoose.model("Course", courseSchema);

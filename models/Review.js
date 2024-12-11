@@ -72,7 +72,7 @@ reviewSchema.post("save", async function () {
 
 reviewSchema.post("findOneAndDelete", async function (doc) {
   if (doc) {
-    await this.model.getAverageRating(doc.bootcamp);
+    await this.constructor.getAverageRating(doc.bootcamp);
     console.log("delete review getAverageRating middleware called");
   }
 });
