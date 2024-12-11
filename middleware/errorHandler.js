@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
 
   //   if the error is CastError then the following activity is to be performed
   if (err.name === "CastError") {
-    const message = `Resource not found for the id of ${err.value}`;
+    const message = `Resource not found`;
     error = new ErrorResponse(message, 404);
   }
 

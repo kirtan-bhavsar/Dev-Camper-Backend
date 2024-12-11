@@ -10,6 +10,7 @@ import fileupload from "express-fileupload";
 import path from "path";
 import url from "url";
 import cookieParser from "cookie-parser";
+import mongoSanitize from "express-mongo-sanitize";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,7 @@ const app = express();
 const mongoUri = process.env.MONGO_URI;
 
 app.use(express.json());
+app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, "public")));
 
 // app.use(logger);
